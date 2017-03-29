@@ -14,12 +14,19 @@ $ virtualenv stockmarkettools
 Downloads Market Pulse images from [Investors.com](http://www.investors.com).
 
 ```
-$ python marketpulse.py --start_date=01/01/2016 --dir=pulse
+$ python stocks.py --pulse --pulse_start=01/01/2016 --pulse_dir=pulse
 ```
 
 #### Complete Stock Checklist
 
 Pulls information on a stock from a variety of sources (Yahoo Finance, IBD, etc.).
 ```
-$ python stock_checklist.py GOOG
+$ python stocks.py --symbols GOOG
+```
+
+#### Download IBD Stock Lists
+
+Downloads a specific stock list from IBD.
+```
+$ python stocks.py --lists ibd50
 ```

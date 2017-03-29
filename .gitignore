@@ -1,8 +1,11 @@
 pulse
-ibd50
+lists
 examples
 stockmarkettools
 html_tests
+*.p
+stocks/*
+results/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

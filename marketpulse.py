@@ -6,16 +6,17 @@ import requests
 import shutil
 import os
 from datetime import timedelta, date, datetime
-import holidays
+from pandas.tseries.holiday import USFederalHolidayCalendar as calendar
 
-def daterange(start_date, end_date):
+def _daterange(start_date, end_date):
     for n in range(int ((end_date - start_date).days)):
         yield start_date + timedelta(n)
 
+# Odd image URLs:
 # http://www.investors.com/wp-content/uploads/2017/03/MP4-3_030717.png
 # http://www.investors.com/wp-content/uploads/2017/03/MP4-3_030617.png
 # http://www.investors.com/wp-content/uploads/2017/02/MP_5nas_022317.png
-def download_pulse(date, directory):
+def _download_pulse(date, directory):
     """
     Downloads the daily Market Pulse image from Investors.com's Big Picture
     section.
@@ -41,21 +42,16 @@ def download_pulse(date, directory):
     else:
         print u'%s ✖' % str(date)
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Download Market Pulse from Investors.com')
-    parser.add_argument('--dir','-d', default='./pulse', help='output directory for PNGs')
-    parser.add_argument('--start_date', '-s', default='./pulse', help='start date for MP scrape date range (MM/DD/YYYY)', type=lambda d: datetime.strptime(d, '%m/%d/%Y').date())
-    args = parser.parse_args()
+def download_pulse_range(start, end, pulsedir):
+    cal = calendar()
 
-    us_holidays = holidays.US()
+    if not os.path.exists(pulsedir):
+        os.makedirs(pulsedir)
 
-    if not os.path.exists(args.dir):
-        os.makedirs(args.dir)
-
-    for date in daterange(args.start_date, date.today()):
-        if date.weekday() < 5: # Monday...Friday == 0..4
-            if date in us_holidays:
+    for day in _daterange(start, end):
+        if day.weekday() < 5: # Monday...Friday == 0..4
+            if day in cal.holidays():
                 print u'(Holiday)...',
-            download_pulse(date, args.dir)
+            _download_pulse(day, pulsedir)
         else:
-            print u'%s (Weekend)' % str(date)
+            print u'%s (Weekend)' % str(day)
