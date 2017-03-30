@@ -4,7 +4,7 @@ import os
 import requests
 from datetime import timedelta,date,datetime
 from stock_list import load_list,write_stocklist,stocklists
-from stock_checklist import checklist,write_checklist
+from stock_checklist import checklist,write_checklist,checklist_pformat
 from marketpulse import download_pulse_range
 
 def _ibd_session(username, password):
@@ -24,6 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('--pulse', help='Downloads the Market Pulse PNG file for each day since pulse_start', action='store_true')
     parser.add_argument('--pulse_start', help='Inclusive start date for downloading Market Pulse PNG files (MM/DD/YYYY) (default: yesterday)', default=date.today()-timedelta(days=1), type=lambda d: datetime.strptime(d, '%m/%d/%Y').date())
     parser.add_argument('--pulse_dir', help='Directory to store Market Pulse PNG files (default: \'./pulse\')', default='pulse')
+    parser.add_argument('--verbose', help='Print out tool outputs to stdout', action='store_true')
     # --market
     args = parser.parse_args()
 
@@ -43,6 +44,8 @@ if __name__ == '__main__':
             stocklist = load_list(listname, ibd_session)
             write_stocklist(stocklist, listname)
             print "Downloaded %s for %s" % (listname, date.today())
+            if args.verbose:
+                print stocklist
 
     # Fill out a Stock Checklist for each symbol
     if args.symbols:
@@ -51,6 +54,8 @@ if __name__ == '__main__':
             stockchecklist = checklist(symbol, ibd50_list, ibd_session)
             write_checklist(symbol, stockchecklist)
             print "Completed stock checklist for %s on %s" % (symbol, date.today())
+            if args.verbose:
+                print checklist_pformat(stockchecklist)
 
     if args.pulse:
         download_pulse_range(args.pulse_start, date.today(), args.pulse_dir)

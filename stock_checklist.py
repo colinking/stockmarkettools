@@ -197,6 +197,11 @@ def checklist(symbol, ibd50_list, ibd_session):
 
     return stock
 
+def checklist_pformat(checklistjson):
+    pp = pprint.PrettyPrinter(indent=4)
+    return pp.pformat(checklistjson)
+
+
 def write_checklist(stock, checklistjson):
     """
     Writes a completed stock checklist to a file in stocks/<stock>_<date>.txt
@@ -209,5 +214,4 @@ def write_checklist(stock, checklistjson):
     # Store the list in an output file, one symbol per line
     filename = "stocks/%s_%s.txt" % (stock, str(date.today()))
     with open(filename, "w") as f:
-        pp = pprint.PrettyPrinter(indent=4)
-        f.write(pp.pformat(checklistjson))
+        f.write(checklist_pformat(checklistjson))
